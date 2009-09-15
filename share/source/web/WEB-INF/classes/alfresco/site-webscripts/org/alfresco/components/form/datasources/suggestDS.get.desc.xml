@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>Data sources for auto complete widget</shortname>
+  <description>Data sources for auto complete widget</description>
+  <url template="/ds/autocomplete/{resource}"/>
+  <format default="html">extension</format>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+</webscript>

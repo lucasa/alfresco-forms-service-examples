@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model name="forms32:forms32model" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+	<description>Content model file for 3.2 sample forms</description>
+	<author>Dr. Q</author>
+	<version>1.0</version>
+
+	<imports>
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
+	</imports>
+
+	<namespaces>
+		<namespace uri="http://www.alfresco.org/model/forms32" prefix="forms32"/>
+	</namespaces>
+
+	<constraints>
+		<!-- Name constraint Limited size -->
+		<constraint name="forms32:namelength" type="LENGTH">
+	        <parameter name="minLength"><value>0</value></parameter>
+	        <parameter name="maxLength"><value>100</value></parameter>
+	    </constraint>
+		<!-- Email constraint -->
+        <constraint name="forms32:emailformat" type="REGEX">
+        	<parameter name="expression"><value><![CDATA[[A-Za-z0-9._]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,4}]]></value></parameter>
+        	<parameter name="requiresMatch"><value>true</value></parameter>
+        </constraint>
+		<!-- Zip constraint -->
+        <constraint name="forms32:zipformat" type="REGEX">
+        	<parameter name="expression"><value><![CDATA[[0-9][0-9][0-9][0-9][0-9]]]></value></parameter>
+        	<parameter name="requiresMatch"><value>false</value></parameter>
+        </constraint>
+	    <!-- Name prefix constraint List -->
+		<constraint name="forms32:nameprefixlist" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Mr.</value>
+					<value>Mrs.</value>
+					<value>Ms.</value>
+					<value>Dr.</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive"><value>true</value></parameter>
+		</constraint>
+	</constraints> 	
+
+	<types>
+		<type name="forms32:userprofile">
+	         <title>User Profile</title>
+	         <parent>cm:content</parent>
+	         <properties>
+	         </properties>
+	         <mandatory-aspects>
+	            <aspect>forms32:basicuserprofile</aspect>
+	            <aspect>forms32:address</aspect>
+	            <aspect>forms32:personalinfo</aspect>
+	            <aspect>cm:generalclassifiable</aspect>
+	         </mandatory-aspects>
+	      </type>
+	</types>  
+	
+	<aspects>
+		<!-- Definition of basic user profile aspect -->
+		<aspect name="forms32:basicuserprofile">
+			<title>Basic User Profile</title>
+			<properties>
+				<property name="forms32:nameprefix">
+					<title>Name Prefix</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<default>Mr.</default>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+					<constraints>
+						<constraint ref="forms32:nameprefixlist"/>
+					</constraints>
+				</property>
+				<property name="forms32:firstname">
+					<title>First Name</title>
+					<type>d:text</type>
+					<mandatory enforced="false">true</mandatory>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+					<constraints>
+						<constraint ref="forms32:namelength"/>
+					</constraints>
+				</property>
+				<property name="forms32:lastname">
+					<title>Last Name</title>
+					<type>d:text</type>
+					<mandatory enforced="false">true</mandatory>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+					<constraints>
+						<constraint ref="forms32:namelength"/>
+					</constraints>
+				</property>
+				<property name="forms32:email">
+					<title>Email</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+					<constraints>
+						<constraint ref="forms32:emailformat"/>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		<!-- Definition of basic user profile aspect -->
+		<aspect name="forms32:address">
+			<title>User Address</title>
+			<properties>
+				<property name="forms32:street">
+					<title>Street</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:city">
+					<title>City</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>false</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:state">
+					<title>State</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>false</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:zip">
+					<title>Zip</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>false</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+					<constraints>
+						<constraint ref="forms32:zipformat"/>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>	
+
+		<!-- Definition of basic user profile aspect -->
+		<aspect name="forms32:personalinfo">
+			<title>Personal Information</title>
+			<properties>
+				<property name="forms32:birthday">
+					<title>Birthday</title>
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>false</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:bio">
+					<title>Short Biography</title>
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<multiple>false</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:tag">
+					<title>Random Tag</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:carmake">
+					<title>Car Make</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+				<property name="forms32:carmodel">
+					<title>Car Model</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+	                <index enabled="true">
+	                	<atomic>false</atomic>
+	                	<stored>false</stored>
+	                  	<tokenised>true</tokenised>
+	                </index>
+				</property>
+			</properties>
+			<associations>
+				<association name="forms32:buddies">
+				   <source>
+					  <mandatory>false</mandatory>
+					  <many>true</many>
+				   </source>
+				   <target>
+					  <class>cm:person</class>
+					  <mandatory>false</mandatory>
+					  <many>true</many>
+				   </target>
+				</association>
+			</associations>
+		</aspect>
+		
+	</aspects>
+
+</model>

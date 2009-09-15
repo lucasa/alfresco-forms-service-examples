@@ -1,0 +1,8 @@
+<webscript>
+  <shortname>Data sources for auto makes and models</shortname>
+  <description>Data sources for auto makes and models</description>
+  <url template="/ds/cars/{make}"/>
+  <format default="html">extension</format>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+</webscript>

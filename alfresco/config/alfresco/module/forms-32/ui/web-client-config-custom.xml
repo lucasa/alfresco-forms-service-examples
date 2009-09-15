@@ -1,0 +1,78 @@
+<alfresco-config>
+ 
+   <config evaluator="string-compare" condition="Content Wizards">
+      <content-types>
+         <type name="forms32:userprofile" />
+      </content-types>
+   </config>
+
+   <config evaluator="node-type" condition="forms32:userprofile">
+      <property-sheet>
+         <show-property name="forms32:nameprefix"/>
+         <show-property name="forms32:firstname"/>
+         <show-property name="forms32:lastname"/>
+         <show-property name="forms32:email"/>
+         <show-property name="forms32:street"/>
+         <show-property name="forms32:city"/>
+         <show-property name="forms32:state"/>
+         <show-property name="forms32:zip"/>
+         <show-property name="forms32:birthday"/>
+         <show-property name="forms32:bio"/>
+         <show-property name="forms32:tag"/>
+         <show-property name="forms32:carmake"/>
+         <show-property name="forms32:carmodel"/>
+         <show-association name="forms32:buddies" display-label="Buddies"/>
+      </property-sheet>
+   </config>
+   <config evaluator="aspect-name" condition="forms32:basicuserprofile">
+      <property-sheet>
+         <show-property name="forms32:nameprefix"/>
+         <show-property name="forms32:firstname"/>
+         <show-property name="forms32:lastname"/>
+         <show-property name="forms32:email"/>
+      </property-sheet>
+   </config>
+
+   <config evaluator="aspect-name" condition="forms32:address">
+      <property-sheet>
+         <show-property name="forms32:street"/>
+         <show-property name="forms32:city"/>
+         <show-property name="forms32:state"/>
+         <show-property name="forms32:zip"/>
+      </property-sheet>
+   </config>
+
+   <config evaluator="aspect-name" condition="forms32:personalinfo">
+      <property-sheet>
+         <show-property name="forms32:birthday"/>
+         <show-property name="forms32:bio"/>
+         <show-property name="forms32:tag"/>
+         <show-property name="forms32:carmake"/>
+         <show-property name="forms32:carmodel"/>
+         <show-association name="forms32:buddies" display-label="Buddies"/>
+      </property-sheet>
+   </config>
+
+   <config evaluator="string-compare" condition="Action Wizards">
+      <aspects>
+         <aspect name="forms32:basicuserprofile"/>
+         <aspect name="forms32:address"/>
+         <aspect name="forms32:personalinfo"/>
+      </aspects>
+   </config>
+
+<!--
+   <config evaluator="string-compare" condition="Advanced Search">
+      <advanced-search>
+         <content-types>
+            <type name="forms32:contributor_of_month" />
+         </content-types>
+         <custom-properties>
+            <meta-data type="forms32:contributor_of_month" property="forms32:selection_date" />
+            <meta-data aspect="forms32:contributor_details" property="forms32:selection_date" />
+         </custom-properties>
+      </advanced-search>
+   </config>
+-->
+
+</alfresco-config>

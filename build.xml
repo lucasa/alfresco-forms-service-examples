@@ -1,0 +1,187 @@
+<project name="alfresco.extension" default="package-extension">
+	
+	<property file="build.properties"/>
+
+	<property name="module.id" value="${module.id}"/>
+	<property name="module.title" value="${module.title}" />
+	
+	<property name="project.dir" value="."/>
+	
+	<property name="project.alfresco.dir" value="${project.dir}/alfresco"/>
+	<property name="project.share.dir"    value="${project.dir}/share"/>
+		
+	<property name="config.alfresco.dir" value="${project.alfresco.dir}/config"/>
+
+	<property name="build.alfresco.dir" value="${project.alfresco.dir}/build"/>
+	<property name="build.share.dir"    value="${project.share.dir}/build"/>
+	
+	<property name="dist.alfresco.dir" value="${build.alfresco.dir}/dist"/>
+	<property name="dist.share.dir"    value="${build.share.dir}/dist"/>
+
+	<property name="alfresco.src.web.dir"  value="${project.alfresco.dir}/source/web" />	
+	<property name="alfresco.src.java.dir" value="${project.alfresco.dir}/source/java" />
+	
+	<property name="share.src.web.dir" value="${project.dir}/share/source/web" />	
+	<property name="share.src.java.dir" value="${project.dir}/share/source/java" />
+
+	<property name="package.file.alfresco.jar" value="${dist.alfresco.dir}/${module.id}.jar" />
+	<property name="package.file.share.jar"    value="${dist.share.dir}/${module.id}-share.jar" />
+
+	<property name="package.file.alfresco.amp" value="${dist.alfresco.dir}/${module.id}.amp" />
+	<property name="package.file.share.zip" value="${dist.share.dir}/${module.id}-share.zip" />
+	
+	<property name="property.alfresco.dir" value="${project.alfresco.dir}/config/alfresco/module/${module.id}" />
+	
+	<property name="alfresco.war"           value="${alfresco.location}/tomcat/webapps/alfresco.war"/>
+	<property name="alfresco.exploded.dir"  value="${alfresco.location}/tomcat/webapps/alfresco"/>
+	<property name="alfresco.extension.dir" value="${alfresco.location}/tomcat/shared/classes/alfresco/extension"/>
+
+	<property name="share.war"           value="${alfresco.location}/tomcat/webapps/share.war"/>
+	<property name="share.exploded.dir"  value="${alfresco.location}/tomcat/webapps/share"/>
+
+	<property name="dev.dir"                 value="${project.dir}/dev"/>
+	<property name="webscripts.dev.dir"      value="${dev.dir}/webscripts/source"/>
+	<property name="javascripts.dev.dir"     value="${dev.dir}/javascripts/source"/>	
+	<property name="email.templates.dev.dir" value="${dev.dir}/templates/source"/>
+	<property name="extensions.dev.dir"      value="${dev.dir}/config/extension"/>
+
+
+	<path id="class.path">
+		<dirset dir="${build.alfresco.dir}" />
+		<dirset dir="${build.share.dir}" />		
+		<fileset dir="${alfresco.location}/bin" includes="**/*.jar"/>
+		<fileset dir="${alfresco.location}/tomcat/lib" includes="**/*.jar"/>
+		<fileset dir="${alfresco.location}/tomcat/webapps/alfresco/WEB-INF/lib" includes="**/*.jar"/>
+		<fileset dir="${alfresco.location}/tomcat/webapps/share/WEB-INF/lib" includes="**/*.jar"/>
+	</path>
+	
+	<target name="clean">
+		<delete>
+			<fileset dir="${build.alfresco.dir}" includes="**/*"/>
+			<fileset dir="${build.share.dir}" includes="**/*"/>
+  		</delete>
+	</target>
+
+	<target name="alfresco-compile">
+		<mkdir dir="${build.alfresco.dir}" />
+		<mkdir dir="${build.alfresco.dir}/dist" />
+		<mkdir dir="${build.alfresco.dir}/classes" />
+		<javac classpathref="class.path" srcdir="${alfresco.src.java.dir}" destdir="${build.alfresco.dir}/classes" debug="true"/>
+		<copy todir="${build.alfresco.dir}/classes">
+			<fileset dir="${alfresco.src.java.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.ftl"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>		
+	</target>
+   
+	<target name="package-alfresco-jar" depends="alfresco-compile">
+		<delete file="${package.file.alfresco.jar}" />  
+		<jar destfile="${package.file.alfresco.jar}">
+			<fileset dir="${build.alfresco.dir}/classes" excludes="*.zip"/>
+		</jar>
+	</target>
+
+	<target name="share-compile">
+		<mkdir dir="${build.share.dir}" />
+		<mkdir dir="${build.share.dir}/dist" />
+		<mkdir dir="${build.share.dir}/classes" />
+		<javac classpathref="class.path" srcdir="${share.src.java.dir}" destdir="${build.share.dir}/classes" debug="true"/>
+		<copy todir="${build.share.dir}/classes">
+			<fileset dir="${share.src.java.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.ftl"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>		
+	</target>
+   
+	<target name="package-share-jar" depends="share-compile">
+		<delete file="${package.file.share.jar}" />  
+		<jar destfile="${package.file.share.jar}">
+			<fileset dir="${build.share.dir}/classes" excludes="*.zip"/>
+		</jar>
+	</target>
+
+	<target name="package-module" depends="package-alfresco-jar" description="Packages the module">
+		<echo>Packaging ${module.title} AMP file</echo>
+		<zip destfile="${package.file.alfresco.amp}" update="true">
+			<zipfileset file="${property.alfresco.dir}/module.properties"/>
+			<zipfileset file="${property.alfresco.dir}/file-mapping.properties"/>
+			<zipfileset file="${package.file.alfresco.jar}" prefix="web/WEB-INF/lib"/>
+   	     	<zipfileset dir="${config.alfresco.dir}" prefix="config">
+	   	     		<exclude name="**/module.properties"/>
+	   	     		<exclude name="**/file-mapping.properties"/>
+			</zipfileset>
+   	     	<zipfileset dir="${alfresco.src.web.dir}" prefix="web"/>
+   		</zip>
+	</target>
+	
+	<target name="package-share-module" depends="package-alfresco-jar,package-share-jar" description="Packages the share module">
+		<echo>Packaging ${module.title} Share Zip file</echo>
+		<zip destfile="${package.file.share.zip}" update="true">
+			<zipfileset file="${package.file.alfresco.jar}" prefix="WEB-INF/lib"/>
+   	     	<zipfileset dir="${share.src.web.dir}"/>
+   		</zip>
+	</target>
+
+	<target name="package" depends="package-share-module, package-module" />
+	
+	<target name="apply-amp" depends="package">
+		<echo>Installing ${module.title} into WAR</echo>
+   		<copy file="${package.file.amp}" todir="${alfresco.location}/amps"/>
+   		<exec dir="${alfresco.location}" executable="${alfresco.location}/apply_amps.bat"/>
+	</target>
+
+	<target name="dev" depends="package-alfresco-jar,package-share-jar">		
+
+		<copy todir="${alfresco.exploded.dir}/WEB-INF/classes/alfresco" verbose="true">
+			<fileset dir="${config.alfresco.dir}/alfresco">
+				<exclude name="**/module.properties"/>
+	   	     	<exclude name="**/file-mapping.properties"/>
+	   	    </fileset> 	
+		</copy>
+
+		<copy todir="${alfresco.exploded.dir}" verbose="true">
+			<fileset dir="${alfresco.src.web.dir}" />
+		</copy>
+
+		<copy todir="${share.exploded.dir}" verbose="true">
+			<fileset dir="${share.src.web.dir}" />
+		</copy>	
+
+
+<!--
+		<copy todir="${share.exploded.dir}/WEB-INF/lib" file="${package.file.share.jar}" verbose="true"/>
+
+		<copy todir="${share.exploded.dir}" verbose="true">
+			<fileset dir="${share.src.web.dir}" />
+		</copy>	
+
+		<copy todir="${alfresco.exploded.dir}/WEB-INF/lib" file="${package.file.alfresco.jar}" verbose="true"/>
+
+		<copy todir="${alfresco.exploded.dir}" verbose="true">
+			<fileset dir="${alfresco.src.web.dir}" />
+		</copy>
+
+		<copy todir="${share.exploded.dir}/WEB-INF/lib" file="${package.file.share.jar}" verbose="true"/>
+
+		<copy todir="${alfresco.extension.dir}" verbose="true">
+			<fileset dir="${extensions.dev.dir}" />
+		</copy>    			
+		
+		<copy todir="${share.exploded.dir}" verbose="true">
+			<fileset dir="${share.src.web.dir}" />
+		</copy>	
+			
+		<copy todir="${alfresco.javascripts.dir}" verbose="true">
+			<fileset dir="${javascripts.dev.dir}" />
+		</copy>    			
+		<copy todir="${alfresco.webscripts.dir}" verbose="true">
+			<fileset dir="${webscripts.dev.dir}" />
+		</copy>    	
+-->
+	</target>
+   
+</project>
